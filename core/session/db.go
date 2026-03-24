@@ -1,6 +1,8 @@
 package session
 
 import (
+	"time"
+
 	"github.com/evcc-io/evcc/server/db"
 	"github.com/evcc-io/evcc/util"
 	"gorm.io/gorm"
@@ -68,7 +70,7 @@ func (s *DB) Sessions() (Sessions, error) {
 
 func (s *DB) ClosePendingSessionsInHistory(chargeMeterTotal float64) error {
 	var res Sessions
-	if tx := s.db.Find(&res, map[string]any{"finished": "0001-01-01 00:00:00+00:00", "Loadpoint": s.name}); tx.Error != nil {
+	if tx := s.db.Find(&res, map[string]any{"finished": time.Time{}, "Loadpoint": s.name}); tx.Error != nil {
 		return tx.Error
 	}
 

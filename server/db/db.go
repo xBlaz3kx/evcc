@@ -9,6 +9,7 @@ import (
 	"github.com/evcc-io/evcc/util"
 	"github.com/glebarez/sqlite"
 	"github.com/mitchellh/go-homedir"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -60,12 +61,11 @@ func New(driver, dsn string) (*gorm.DB, error) {
 		util.NewLogger("main").INFO.Println("using sqlite database:", connectionStr)
 
 		dialect = sqlite.Open(connectionStr)
-	// case "postgres":
-	// 	dialect = postgres.Open(dsn)
-	// case "mysql":
-	// 	dialect = mysql.Open(dsn)
+	case "postgres":
+		util.NewLogger("main").INFO.Println("using postgres database")
+		dialect = postgres.Open(dsn)
 	default:
-		return nil, fmt.Errorf("invalid database type: %s not in [sqlite]", driver)
+		return nil, fmt.Errorf("invalid database type: %s not in [sqlite, postgres]", driver)
 	}
 
 	return gorm.Open(dialect, &gorm.Config{

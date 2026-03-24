@@ -43,6 +43,12 @@ func TestUnitNewDriver(t *testing.T) {
 			dsn:     "/var/lib/evcc/evcc.db",
 			wantErr: true,
 		},
+		{
+			name:    "Unsupported Driver mysql",
+			driver:  "mysql",
+			dsn:     "user:pass@tcp(localhost:3306)/evcc",
+			wantErr: true,
+		},
 	}
 
 	for _, test := range tests {

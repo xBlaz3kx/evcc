@@ -2,6 +2,7 @@ package metrics
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/evcc-io/evcc/server/db"
@@ -35,18 +36,20 @@ func Persist(ts time.Time, value float64) error {
 // Profile returns a 15min average meter profile in Wh.
 // Profile is sorted by timestamp starting at 00:00. It is guaranteed to contain 96 15min values.
 func Profile(from time.Time) (*[96]float64, error) {
-	db, err := db.Instance.DB()
-	if err != nil {
-		return nil, err
+	// Use localtime grouping to fix https://github.com/evcc-io/evcc/discussions/23759
+	var timeExpr string
+	switch db.Instance.Dialector.Name() {
+	case "postgres":
+		timeExpr = `TO_CHAR(ts AT TIME ZONE current_setting('TimeZone'), 'HH24:MI')`
+	default:
+		timeExpr = `strftime("%H:%M", ts, 'localtime')`
 	}
 
-	// Use 'localtime' in strftime to fix https://github.com/evcc-io/evcc/discussions/23759
-	rows, err := db.Query(`SELECT min(ts) AS ts, avg(val) AS val
+	rows, err := db.Instance.Raw(fmt.Sprintf(`SELECT min(ts) AS ts, avg(val) AS val
 		FROM meters
 		WHERE meter = ? AND ts >= ?
-		GROUP BY strftime("%H:%M", ts, 'localtime')
-		ORDER BY strftime("%H:%M", ts, 'localtime') ASC`, 1, from,
-	)
+		GROUP BY %s
+		ORDER BY %s ASC`, timeExpr, timeExpr), 1, from).Rows()
 	if err != nil {
 		return nil, err
 	}

@@ -574,8 +574,15 @@ func configureEnvironment(cmd *cobra.Command, conf *globalconfig.All) error {
 
 // configureDatabase configures session database
 func configureDatabase(conf globalconfig.DB) error {
-	if conf.Dsn == "" {
-		conf.Dsn = userDB
+	switch strings.ToLower(conf.Type) {
+	case "postgres":
+
+	case "sqlite":
+		if conf.Dsn == "" {
+			conf.Dsn = userDB
+		}
+	default:
+		return errors.New("unsupported database")
 	}
 
 	if err := db.NewInstance(conf.Type, conf.Dsn); err != nil {

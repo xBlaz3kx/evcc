@@ -70,7 +70,7 @@ func (s *DB) Sessions() (Sessions, error) {
 
 func (s *DB) ClosePendingSessionsInHistory(chargeMeterTotal float64) error {
 	var res Sessions
-	if tx := s.db.Find(&res, map[string]any{"finished": time.Time{}, "Loadpoint": s.name}); tx.Error != nil {
+	if tx := s.db.Find(&res, map[string]any{"finished": time.Time{}, "loadpoint": s.name}); tx.Error != nil {
 		return tx.Error
 	}
 
@@ -78,7 +78,7 @@ func (s *DB) ClosePendingSessionsInHistory(chargeMeterTotal float64) error {
 		var nextSession Session
 
 		var tx *gorm.DB
-		if tx = s.db.Limit(1).Order("ID").Find(&nextSession, "ID > ? AND Loadpoint = ?", session.ID, s.name); tx.Error != nil {
+		if tx = s.db.Limit(1).Order("id").Find(&nextSession, "id > ? AND loadpoint = ?", session.ID, s.name); tx.Error != nil {
 			return tx.Error
 		}
 

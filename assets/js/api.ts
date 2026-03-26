@@ -28,10 +28,22 @@ const api = axios.create({
   paramsSerializer: customParamsSerializer,
 });
 
+// translate callback — set from app.ts after i18n is ready
+let _t: (key: string) => string = (key) => key;
+export function setApiTranslate(t: (key: string) => string) {
+  _t = t;
+}
+
 const errorInterceptor = (error: any) => {
   // handle unauthorized errors
   if (error.response?.status === 401) {
     openLoginModal();
+    return Promise.reject(error);
+  }
+
+  // handle forbidden errors
+  if (error.response?.status === 403) {
+    window.app.raise({ message: _t("api.error.forbidden"), level: "warn" });
     return Promise.reject(error);
   }
 

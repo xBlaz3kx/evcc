@@ -160,7 +160,7 @@ async function _stop(instance?: ChildProcess) {
     log("auth status", res.status, res.statusText, res.data);
     // login required
     if (!res.data) {
-      const res = await axios.post(`${baseUrl()}/api/auth/login`, { password: "secret" });
+      const res = await axios.post(`${baseUrl()}/api/auth/login`, { username: "admin", password: "secret" });
       log("login", res.status, res.statusText);
       cookie = res.headers["set-cookie"];
     }

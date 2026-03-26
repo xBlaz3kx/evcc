@@ -80,6 +80,11 @@ export default function setupRouter(i18n: VueI18nInstance) {
         props: true,
       },
       {
+        path: "/users",
+        component: () => import("./views/Users.vue"),
+        beforeEnter: ensureAuth,
+      },
+      {
         path: "/sessions",
         component: () => import("./views/Sessions.vue"),
         props: (route) => {

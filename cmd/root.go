@@ -22,6 +22,7 @@ import (
 	"github.com/evcc-io/evcc/server/eebus"
 	"github.com/evcc-io/evcc/server/mcp"
 	"github.com/evcc-io/evcc/server/network"
+	"github.com/evcc-io/evcc/server/rbac"
 	"github.com/evcc-io/evcc/server/updater"
 	"github.com/evcc-io/evcc/util"
 	"github.com/evcc-io/evcc/util/auth"
@@ -427,6 +428,10 @@ func runRoot(cmd *cobra.Command, args []string) {
 		valueChan <- util.Param{Key: keys.DemoMode, Val: true}
 	}
 
+	if err := rbac.Init(); err != nil {
+		log.FATAL.Fatalf("failed to initialize RBAC: %v", err)
+	}
+
 	httpd.RegisterSystemHandler(site, func(k string, v any) {
 		valueChan <- util.Param{Key: k, Val: v}
 	}, cache, authObject, func() {
@@ -446,7 +451,7 @@ func runRoot(cmd *cobra.Command, args []string) {
 		site.DumpConfig()
 		site.Prepare(valueChan, pushChan)
 
-		httpd.RegisterSiteHandlers(site)
+		httpd.RegisterSiteHandlers(site, authObject)
 
 		go func() {
 			site.Run(stopC, conf.Interval)

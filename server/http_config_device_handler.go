@@ -20,6 +20,7 @@ import (
 	"github.com/evcc-io/evcc/messenger"
 	"github.com/evcc-io/evcc/meter"
 	"github.com/evcc-io/evcc/server/db/settings"
+	dbuser "github.com/evcc-io/evcc/server/db/user"
 	"github.com/evcc-io/evcc/tariff"
 	"github.com/evcc-io/evcc/util"
 	"github.com/evcc-io/evcc/util/config"
@@ -570,14 +571,25 @@ func deleteDeviceHandler(site site.API) func(w http.ResponseWriter, r *http.Requ
 			}
 
 		case templates.Vehicle:
+			// get vehicle title before deletion for user permission cleanup
+			var vehicleTitle string
+			if dev, err2 := config.Vehicles().ByName(config.NameForID(id)); err2 == nil {
+				vehicleTitle = dev.Instance().GetTitle()
+			}
+
 			err = deleteDevice(id, config.Vehicles())
 
-			// cleanup references
+			// cleanup loadpoint default vehicle references
 			for _, dev := range h.Devices() {
 				lp := dev.Instance()
 				if lp.GetDefaultVehicleRef() == config.NameForID(id) {
 					lp.SetDefaultVehicleRef("")
 				}
+			}
+
+			// cleanup user vehicle permissions
+			if vehicleTitle != "" {
+				_ = dbuser.RemoveVehicleFromAllUsers(vehicleTitle)
 			}
 
 		case templates.Circuit:

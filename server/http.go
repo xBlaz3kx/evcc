@@ -120,7 +120,7 @@ func (s *HTTPd) Router() *mux.Router {
 }
 
 // RegisterSiteHandlers connects the http handlers to the site
-func (s *HTTPd) RegisterSiteHandlers(site site.API) {
+func (s *HTTPd) RegisterSiteHandlers(site site.API, authObject auth.Auth) {
 	router := s.Server.Handler.(*mux.Router)
 
 	// api
@@ -130,6 +130,7 @@ func (s *HTTPd) RegisterSiteHandlers(site site.API) {
 	api.Use(handlers.CORS(
 		handlers.AllowedHeaders([]string{"Content-Type"}),
 	))
+	api.Use(ensureAuthHandler(authObject))
 
 	// site api
 	smartCostLimit := func(lp loadpoint.API, limit *float64) {
@@ -266,6 +267,30 @@ func (s *HTTPd) RegisterSystemHandler(site *core.Site, pub publisher, cache *uti
 			"auth":     {"GET", "/status", authStatusHandler(auth)},
 			"login":    {"POST", "/login", loginHandler(auth)},
 			"logout":   {"POST", "/logout", logoutHandler},
+			"setup":    {"POST", "/setup", setupHandler(auth)},
+		}
+
+		for _, r := range routes {
+			api.Methods(r.Methods()...).Path(r.Pattern).Handler(r.HandlerFunc)
+		}
+	}
+
+	{ // api/users
+		api := api.PathPrefix("/users").Subrouter()
+		api.Use(ensureAuthHandler(auth))
+
+		routes := map[string]route{
+			"listUsers":           {"GET", "", listUsersHandler},
+			"createUser":          {"POST", "", createUserHandler},
+			"getUser":             {"GET", "/{id:[0-9]+}", getUserHandler},
+			"deleteUser":          {"DELETE", "/{id:[0-9]+}", deleteUserHandler},
+			"updateUser":          {"PATCH", "/{id:[0-9]+}", updateUserHandler},
+			"listUserVehicles":    {"GET", "/{id:[0-9]+}/vehicles", listUserVehiclesHandler},
+			"addUserVehicle":      {"POST", "/{id:[0-9]+}/vehicles", addUserVehicleHandler},
+			"removeUserVehicle":   {"DELETE", "/{id:[0-9]+}/vehicles/{vehicle}", removeUserVehicleHandler},
+			"listUserLoadpoints":  {"GET", "/{id:[0-9]+}/loadpoints", listUserLoadpointsHandler},
+			"addUserLoadpoint":    {"POST", "/{id:[0-9]+}/loadpoints", addUserLoadpointHandler},
+			"removeUserLoadpoint": {"DELETE", "/{id:[0-9]+}/loadpoints/{loadpoint}", removeUserLoadpointHandler},
 		}
 
 		for _, r := range routes {

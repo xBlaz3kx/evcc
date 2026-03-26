@@ -18,14 +18,28 @@
 			novalidate
 			@submit="setPassword"
 		>
-			<!-- password manager hint -->
+			<FormRow
+				v-if="isSetupMode"
+				:id="formId('Username')"
+				:label="$t('passwordModal.labelUsername')"
+			>
+				<input
+					:id="formId('Username')"
+					v-model="username"
+					type="text"
+					class="form-control"
+					autocomplete="username"
+					required
+				/>
+			</FormRow>
+			<!-- password manager hint for update mode -->
 			<input
+				v-else
 				:id="formId('Username')"
 				class="d-none"
 				type="text"
 				name="username"
 				autocomplete="username"
-				value="admin"
 			/>
 			<FormRow
 				v-if="updateMode"
@@ -103,6 +117,7 @@ export default defineComponent({
 	data() {
 		return {
 			modalVisible: false,
+			username: "",
 			passwordCurrent: "",
 			passwordNew: "",
 			passwordRepeat: "",
@@ -154,6 +169,7 @@ export default defineComponent({
 		},
 		closed() {
 			this.modalVisible = false;
+			this.username = "";
 			this.passwordCurrent = "";
 			this.passwordNew = "";
 			this.passwordRepeat = "";
@@ -181,11 +197,17 @@ export default defineComponent({
 			this.loading = true;
 			this.error = "";
 			try {
-				const data = {
-					current: this.passwordCurrent,
-					new: this.passwordNew,
-				};
-				await api.put("/auth/password", data);
+				if (this.isSetupMode) {
+					await api.post("/auth/setup", {
+						username: this.username,
+						password: this.passwordNew,
+					});
+				} else {
+					await api.put("/auth/password", {
+						current: this.passwordCurrent,
+						new: this.passwordNew,
+					});
+				}
 				this.loading = false;
 				(this.$refs["modal"] as any)?.close();
 			} catch (error: any) {

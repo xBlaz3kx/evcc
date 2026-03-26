@@ -1,4 +1,9 @@
 {
+  "api": {
+    "error": {
+      "forbidden": "You are not authorized to perform this action."
+    }
+  },
   "authProviders": {
     "authCode": "Authentication Code",
     "authCodeHelp": "Copy this code and use it in the next step. Valid for {duration}.",
@@ -933,6 +938,7 @@
     "blog": "Blog",
     "docs": "Documentation",
     "github": "GitHub",
+    "login": "Log in",
     "logout": "Logout",
     "nativeSettings": "Change Server",
     "needHelp": "Need Help?",
@@ -1028,12 +1034,13 @@
     "cancel": "Cancel",
     "demoMode": "Login is not supported in demo mode.",
     "iframeHint": "Open evcc in a new tab.",
-    "iframeIssue": "Your password is correct, but your browser seems to have dropped the authentication cookie. This can happen if you run evcc in an iframe via HTTP.",
-    "invalid": "Password is invalid.",
+    "iframeIssue": "Your credentials are correct, but your browser seems to have dropped the authentication cookie. This can happen if you run evcc in an iframe via HTTP.",
+    "invalid": "Invalid username or password.",
     "login": "Login",
-    "password": "Administrator Password",
+    "password": "Password",
     "reset": "Reset password?",
-    "title": "Authentication"
+    "title": "Authentication",
+    "username": "Username"
   },
   "main": {
     "chargingPlan": {
@@ -1282,15 +1289,16 @@
     "starting": "Starting server..."
   },
   "passwordModal": {
-    "description": "Set a password to protect the configuration settings. Using the main screen is still possible without login.",
+    "description": "Create your admin account to protect the configuration settings. Using the main screen is still possible without login.",
     "empty": "Password should not be empty",
     "labelCurrent": "Current password",
     "labelNew": "New password",
     "labelRepeat": "Repeat password",
-    "newPassword": "Create password",
+    "labelUsername": "Username",
+    "newPassword": "Create account",
     "noMatch": "Passwords do not match",
-    "titleNew": "Set Administrator Password",
-    "titleUpdate": "Update Administrator Password",
+    "titleNew": "Create Admin Account",
+    "titleUpdate": "Update Password",
     "updatePassword": "Update password"
   },
   "session": {
@@ -1476,5 +1484,36 @@
     "lineErrorLink": "line {0}",
     "restartButton": "Restart",
     "title": "Startup Error"
+  },
+  "users": {
+    "addUser": "Add user",
+    "modal": {
+      "delete": "Delete",
+      "errorPasswordEmpty": "Password must not be empty",
+      "errorPasswordMismatch": "Passwords do not match",
+      "password": "Password",
+      "passwordRepeat": "Repeat password",
+      "role": "Role",
+      "save": "Save",
+      "titleAdd": "Add User",
+      "titleEdit": "Edit User",
+      "username": "Username",
+      "loadpointRemove": "Remove charger",
+      "loadpoints": "Chargers",
+      "loadpointsNone": "No chargers assigned",
+      "vehicleRemove": "Remove vehicle",
+      "vehicles": "Vehicles",
+      "vehiclesNone": "No vehicles assigned"
+    },
+    "role": {
+      "admin": "Admin",
+      "maintainer": "Maintainer",
+      "user": "User",
+      "viewer": "Viewer"
+    },
+    "section": {
+      "users": "Users"
+    },
+    "title": "User Management"
   }
 }

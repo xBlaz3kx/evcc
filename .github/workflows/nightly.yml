@@ -9,7 +9,7 @@ on:
 
 jobs:
   check_date:
-    runs-on: depot-ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
     name: Check latest commit
 
     permissions:

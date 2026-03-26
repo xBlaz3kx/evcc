@@ -10,7 +10,7 @@ on:
 jobs:
   update-changelog:
     name: Update Hassio Changelog
-    runs-on: depot-ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: read # push to hassio-addon is authenticated via HASSIO_DEPLOY_TOKEN PAT
@@ -33,7 +33,7 @@ jobs:
             | sort_by(.published_at)
             | reverse
             | .[]
-            | "## [\(.tag_name)] - \(.published_at | split("T")[0])\n\n\((.body // "No release notes.") 
+            | "## [\(.tag_name)] - \(.published_at | split("T")[0])\n\n\((.body // "No release notes.")
             | gsub("(?m)^\\* [0-9a-f]{40} "; "* "))\n"
           ' -r > /tmp/changelog_entries.md
 

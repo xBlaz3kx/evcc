@@ -45,7 +45,7 @@ jobs:
     name: Publish Docker :nightly
     needs:
       - call-build-workflow
-    runs-on: depot-ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: read
@@ -105,7 +105,7 @@ jobs:
     name: Hassio Addon :nightly
     needs:
       - docker
-    runs-on: depot-ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: read
@@ -137,7 +137,7 @@ jobs:
     name: Publish APT nightly
     needs:
       - call-build-workflow
-    runs-on: depot-ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: read

@@ -11,7 +11,7 @@ on:
 jobs:
   call-build-workflow:
     if: startsWith(github.ref, 'refs/tags')
-    uses: evcc-io/evcc/.github/workflows/default.yml@master
+    uses: xblaz3kx/evcc/.github/workflows/default.yml@master
     permissions:
       contents: read
       actions: write
@@ -154,7 +154,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@master
         with:
-          repository: evcc-io/hassio-addon
+          repository: xblaz3k/hassio-addon
           token: ${{ secrets.HASSIO_DEPLOY_TOKEN }}
           path: ./hassio
 

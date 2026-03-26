@@ -12,6 +12,7 @@ import (
 	"github.com/evcc-io/evcc/api"
 	"github.com/evcc-io/evcc/core/session"
 	"github.com/evcc-io/evcc/server/db"
+	dbuser "github.com/evcc-io/evcc/server/db/user"
 	"github.com/evcc-io/evcc/util/locale"
 	"github.com/gorilla/mux"
 	"golang.org/x/text/language"
@@ -54,6 +55,39 @@ func sessionHandler(w http.ResponseWriter, r *http.Request) {
 		if month := fmt.Sprintf("%02s", r.URL.Query().Get("month")); month != "00" {
 			filename += "-" + month
 			push("STRFTIME('%m', created) LIKE ?", month)
+		}
+	}
+
+	// restrict sessions to user's assigned vehicles and loadpoints (admin sees all)
+	if role, _ := r.Context().Value(contextKeyRole).(string); role != string(dbuser.RoleAdmin) {
+		if username, _ := r.Context().Value(contextKeyUsername).(string); username != "" {
+			if u, err := dbuser.ByUsername(username); err == nil {
+				var filters []string
+				var fargs []any
+				if len(u.Vehicles) > 0 {
+					placeholders := strings.Repeat("?,", len(u.Vehicles))
+					placeholders = placeholders[:len(placeholders)-1]
+					filters = append(filters, "vehicle IN ("+placeholders+")")
+					for _, v := range u.Vehicles {
+						fargs = append(fargs, v)
+					}
+				}
+				if len(u.Loadpoints) > 0 {
+					placeholders := strings.Repeat("?,", len(u.Loadpoints))
+					placeholders = placeholders[:len(placeholders)-1]
+					filters = append(filters, "loadpoint IN ("+placeholders+")")
+					for _, lp := range u.Loadpoints {
+						fargs = append(fargs, lp)
+					}
+				}
+				if len(filters) > 0 {
+					cond = append(cond, "("+strings.Join(filters, " OR ")+")")
+					args = append(args, fargs...)
+				} else {
+					// user has no assignments — return no sessions
+					cond = append(cond, "1=0")
+				}
+			}
 		}
 	}
 

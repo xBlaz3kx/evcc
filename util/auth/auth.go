@@ -23,13 +23,19 @@ const (
 	Locked                   // auth features are blocked (demo mode)
 )
 
+// EvccClaims extends the standard JWT claims with an evcc role
+type EvccClaims struct {
+	jwt.RegisteredClaims
+	Role string `json:"role"`
+}
+
 // Auth is the Auth api
 type Auth interface {
 	RemoveAdminPassword()
 	SetAdminPassword(string) error
 	IsAdminPasswordValid(string) bool
-	GenerateJwtToken(time.Duration) (string, error)
-	ValidateJwtToken(string) (bool, error)
+	GenerateJwtToken(username, role string, lifetime time.Duration) (string, error)
+	ValidateJwtToken(string) (*EvccClaims, error)
 	IsAdminPasswordConfigured() bool
 	SetAuthMode(AuthMode)
 	GetAuthMode() AuthMode
@@ -120,37 +126,39 @@ func (a *auth) getJwtSecret() ([]byte, error) {
 	return []byte(jwtSecret), nil
 }
 
-// GenerateJwtToken generates an admin user JWT token with the given lifetime
-func (a *auth) GenerateJwtToken(lifetime time.Duration) (string, error) {
-	claims := &jwt.RegisteredClaims{
-		Subject:   admin,
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(lifetime)),
+// GenerateJwtToken generates a JWT token for the given user and role
+func (a *auth) GenerateJwtToken(username, role string, lifetime time.Duration) (string, error) {
+	claims := &EvccClaims{
+		RegisteredClaims: jwt.RegisteredClaims{
+			Subject:   username,
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(lifetime)),
+		},
+		Role: role,
 	}
 
-	if jwtSecret, err := a.getJwtSecret(); err != nil {
-		return "", err
-	} else {
-		token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-		return token.SignedString(jwtSecret)
-	}
-}
-
-// ValidateJwtToken validates the given JWT token
-func (a *auth) ValidateJwtToken(tokenString string) (bool, error) {
 	jwtSecret, err := a.getJwtSecret()
 	if err != nil {
-		return false, err
+		return "", err
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString(jwtSecret)
+}
+
+// ValidateJwtToken validates the given JWT token and returns the claims
+func (a *auth) ValidateJwtToken(tokenString string) (*EvccClaims, error) {
+	jwtSecret, err := a.getJwtSecret()
+	if err != nil {
+		return nil, err
 	}
 
-	// read token
-	var claims jwt.RegisteredClaims
+	var claims EvccClaims
 	if _, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (any, error) {
 		return jwtSecret, nil
-	}, jwt.WithSubject(admin)); err != nil {
-		return false, err
+	}); err != nil {
+		return nil, err
 	}
 
-	return true, nil
+	return &claims, nil
 }
 
 func (a *auth) SetAuthMode(authMode AuthMode) {

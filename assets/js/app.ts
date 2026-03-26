@@ -8,6 +8,7 @@ import setupI18n from "./i18n.ts";
 import { watchThemeChanges } from "./theme.ts";
 import { appDetection, sendToApp } from "./utils/native";
 import type { Notification } from "./types/evcc";
+import { setApiTranslate } from "./api";
 
 // lazy load smoothscroll polyfill. mainly for safari < 15.4
 if (!window.CSS.supports("scroll-behavior", "smooth")) {
@@ -73,6 +74,7 @@ const head = createHead();
 
 app.use(i18n);
 app.use(setupRouter(i18n.global));
+setApiTranslate((key) => i18n.global.t(key));
 app.use(head);
 app.mixin(VueHeadMixin);
 window.app = app.mount("#app");

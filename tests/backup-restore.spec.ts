@@ -27,7 +27,7 @@ test.describe("reset", async () => {
     await modal.getByRole("button", { name: "Reset..." }).click();
     const confirmModal = page.getByTestId("backup-restore-confirm-modal");
     await expectModalVisible(confirmModal);
-    await expect(confirmModal.getByLabel("Administrator Password")).not.toBeVisible(); // disable auth mode
+    await expect(confirmModal.getByLabel("Password")).not.toBeVisible(); // disable auth mode
     await confirmModal.getByRole("button", { name: "Reset & restart" }).click();
     await expectModalHidden(confirmModal);
     await expectModalHidden(modal);
@@ -81,7 +81,7 @@ test.describe("reset", async () => {
     await modal.getByRole("button", { name: "Reset..." }).click();
     const confirmModal = page.getByTestId("backup-restore-confirm-modal");
     await expectModalVisible(confirmModal);
-    await expect(confirmModal.getByLabel("Administrator Password")).not.toBeVisible(); // disable auth mode
+    await expect(confirmModal.getByLabel("Password")).not.toBeVisible(); // disable auth mode
     await confirmModal.getByRole("button", { name: "Reset & restart" }).click();
     await expectModalHidden(confirmModal);
     await expectModalHidden(modal);
@@ -217,6 +217,7 @@ test.describe("backup and restore", async () => {
     // login to access config
     const loginModal = page.getByTestId("login-modal");
     await expectModalVisible(loginModal);
+    await loginModal.getByLabel("Username").fill("admin");
     await loginModal.getByLabel("Password").fill("secret");
     await loginModal.getByRole("button", { name: "Login" }).click();
     await expectModalHidden(loginModal);
@@ -230,11 +231,11 @@ test.describe("backup and restore", async () => {
     await backupModal.getByRole("button", { name: "Download backup..." }).click();
     const backupConfirmModal = page.getByTestId("backup-restore-confirm-modal");
     await expectModalVisible(backupConfirmModal);
-    const passwordField = backupConfirmModal.getByLabel("Administrator Password");
+    const passwordField = backupConfirmModal.getByLabel("Password");
     await expect(passwordField).toBeVisible();
     await passwordField.fill("wrongpassword");
     await backupConfirmModal.getByRole("button", { name: "Download backup" }).click();
-    await expect(backupConfirmModal.getByText("Password is invalid.")).toBeVisible();
+    await expect(backupConfirmModal.getByText("Invalid password")).toBeVisible();
     await passwordField.clear();
     await passwordField.fill("secret");
     const downloadPromise = page.waitForEvent("download");

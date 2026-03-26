@@ -19,6 +19,7 @@ import (
 	"github.com/evcc-io/evcc/server/assets"
 	"github.com/evcc-io/evcc/server/db"
 	"github.com/evcc-io/evcc/server/db/settings"
+	dbuser "github.com/evcc-io/evcc/server/db/user"
 	"github.com/evcc-io/evcc/util"
 	"github.com/evcc-io/evcc/util/auth"
 	"github.com/evcc-io/evcc/util/encode"
@@ -316,9 +317,17 @@ func logHandler(w http.ResponseWriter, r *http.Request) {
 	jsonWrite(w, log)
 }
 
-// adminPasswordValid validates the admin password and returns true if valid
-func adminPasswordValid(authObject auth.Auth, password string) bool {
-	return authObject.GetAuthMode() == auth.Disabled || authObject.IsAdminPasswordValid(password)
+// passwordValid validates the password of the calling user (from JWT context)
+func passwordValid(authObject auth.Auth, r *http.Request, password string) bool {
+	if authObject.GetAuthMode() == auth.Disabled {
+		return true
+	}
+	username, _ := r.Context().Value(contextKeyUsername).(string)
+	if username == "" {
+		return false
+	}
+	u, err := dbuser.ByUsername(username)
+	return err == nil && u.CheckPassword(password)
 }
 
 func getBackup(authObject auth.Auth) http.HandlerFunc {
@@ -329,7 +338,7 @@ func getBackup(authObject auth.Auth) http.HandlerFunc {
 			return
 		}
 
-		if !adminPasswordValid(authObject, req.Password) {
+		if !passwordValid(authObject, r, req.Password) {
 			http.Error(w, "Invalid password", http.StatusUnauthorized)
 			return
 		}
@@ -392,7 +401,7 @@ func restoreDatabase(authObject auth.Auth, shutdown func()) http.HandlerFunc {
 			return
 		}
 
-		if !adminPasswordValid(authObject, r.FormValue("password")) {
+		if !passwordValid(authObject, r, r.FormValue("password")) {
 			http.Error(w, "Invalid password", http.StatusUnauthorized)
 			return
 		}
@@ -449,7 +458,7 @@ func resetDatabase(authObject auth.Auth, shutdown func()) http.HandlerFunc {
 			return
 		}
 
-		if !adminPasswordValid(authObject, req.Password) {
+		if !passwordValid(authObject, r, req.Password) {
 			http.Error(w, "Invalid password", http.StatusUnauthorized)
 			return
 		}

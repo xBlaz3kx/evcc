@@ -712,3 +712,15 @@ export interface Zone {
   months: string;
   hours: string;
 }
+
+export type UserRole = "viewer" | "user" | "maintainer" | "admin";
+
+export interface User {
+  id: number;
+  username: string;
+  role: UserRole;
+  vehicles: string[];
+  loadpoints: string[];
+  createdAt: string;
+  updatedAt: string;
+}

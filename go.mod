@@ -20,6 +20,8 @@ require (
 	github.com/basvdlei/gotsmart v0.0.3
 	github.com/benbjohnson/clock v1.3.5
 	github.com/bogosj/tesla v1.3.2-0.20250818120641-a31b7b6396c9
+	github.com/casbin/casbin/v3 v3.10.0
+	github.com/casbin/gorm-adapter/v3 v3.41.0
 	github.com/cenkalti/backoff/v4 v4.3.0
 	github.com/cli/browser v1.3.0
 	github.com/cloudfoundry/jibber_jabber v0.0.0-20151120183258-bcc4c8345a21
@@ -119,6 +121,7 @@ require (
 )
 
 require (
+	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
 	github.com/Masterminds/semver/v3 v3.4.0 // indirect
 	github.com/ahmetb/go-linq/v3 v3.2.0 // indirect
@@ -139,6 +142,8 @@ require (
 	github.com/azihsoyn/rijndael256 v0.0.0-20200316065338-d14eefa2b66b // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bitly/go-simplejson v0.5.1 // indirect
+	github.com/bmatcuk/doublestar/v4 v4.9.1 // indirect
+	github.com/casbin/govaluate v1.10.0 // indirect
 	github.com/cenkalti/backoff/v5 v5.0.2 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/clipperhouse/displaywidth v0.10.0 // indirect
@@ -169,9 +174,12 @@ require (
 	github.com/go-openapi/swag/jsonname v0.24.0 // indirect
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
+	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/gokrazy/gokapi v0.0.0-20251205165548-0927bab199d4 // indirect
 	github.com/gokrazy/internal v0.0.0-20251208203110-3c1aa9087c82 // indirect
 	github.com/gokrazy/tools v0.0.0-20260109180632-8ed49b4fafc7 // indirect
+	github.com/golang-sql/civil v0.0.0-20220223132316-b832511892a9 // indirect
+	github.com/golang-sql/sqlexp v0.1.0 // indirect
 	github.com/golanguzb70/lrucache v1.2.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/jsonschema-go v0.4.2 // indirect
@@ -186,7 +194,7 @@ require (
 	github.com/itchyny/timefmt-go v0.1.7 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/pgx/v5 v5.7.6 // indirect
+	github.com/jackc/pgx/v5 v5.8.0 // indirect
 	github.com/jackc/puddle/v2 v2.2.2 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
@@ -198,6 +206,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.19 // indirect
 	github.com/mergermarket/go-pkcs7 v0.0.0-20170926155232-153b18ea13c9 // indirect
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
+	github.com/microsoft/go-mssqldb v1.9.5 // indirect
 	github.com/miekg/dns v1.1.62 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
@@ -251,6 +260,9 @@ require (
 	gopkg.in/go-playground/validator.v9 v9.30.0 // indirect
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
+	gorm.io/driver/mysql v1.6.0 // indirect
+	gorm.io/driver/sqlserver v1.6.3 // indirect
+	gorm.io/plugin/dbresolver v1.6.2 // indirect
 	modernc.org/libc v1.70.0 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.11.0 // indirect

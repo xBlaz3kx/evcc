@@ -11,6 +11,19 @@
 			{{ $t("loginModal.demoMode") }}
 		</div>
 		<form v-else-if="modalVisible" @submit.prevent="login">
+			<div class="mb-3">
+				<label for="loginUsername" class="col-form-label">
+					{{ $t("loginModal.username") }}
+				</label>
+				<input
+					id="loginUsername"
+					v-model="username"
+					type="text"
+					class="form-control"
+					autocomplete="username"
+					required
+				/>
+			</div>
 			<PasswordInput v-model:password="password" :error="error" :iframe-hint="iframeHint" />
 
 			<button type="submit" class="btn btn-primary w-100 mb-3" :disabled="loading">
@@ -52,6 +65,7 @@ export default defineComponent({
 	data: () => {
 		return {
 			modalVisible: false,
+			username: "",
 			password: "",
 			loading: false,
 			resetHint: false,
@@ -73,6 +87,7 @@ export default defineComponent({
 		},
 		closed() {
 			this.modalVisible = false;
+			this.username = "";
 			this.password = "";
 			this.loading = false;
 			this.error = "";
@@ -90,7 +105,7 @@ export default defineComponent({
 			this.loading = true;
 
 			try {
-				const data = { password: this.password };
+				const data = { username: this.username, password: this.password };
 				const res = await api.post("/auth/login", data, {
 					validateStatus: (code) => [200, 401, 403].includes(code),
 				});

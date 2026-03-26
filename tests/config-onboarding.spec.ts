@@ -17,12 +17,13 @@ test.describe("onboarding", async () => {
   test("password, loadpoint, grid, pv", async ({ page }) => {
     await page.goto("/");
 
-    // set admin password
+    // set admin account
     const admin = page.getByTestId("password-setup-modal");
     await expectModalVisible(admin);
+    await admin.getByLabel("Username").fill("admin");
     await admin.getByLabel("New password").fill(PASSWORD);
     await admin.getByLabel("Repeat password").fill(PASSWORD);
-    await admin.getByRole("button", { name: "Create Password" }).click();
+    await admin.getByRole("button", { name: "Create account" }).click();
     await expectModalHidden(admin);
 
     // onboarding

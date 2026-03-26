@@ -10,6 +10,7 @@ import (
 	"github.com/evcc-io/evcc/core"
 	"github.com/evcc-io/evcc/core/loadpoint"
 	coresettings "github.com/evcc-io/evcc/core/settings"
+	dbuser "github.com/evcc-io/evcc/server/db/user"
 	"github.com/evcc-io/evcc/util"
 	"github.com/evcc-io/evcc/util/config"
 	"github.com/evcc-io/evcc/util/templates"
@@ -292,9 +293,17 @@ func deleteLoadpointHandler() http.HandlerFunc {
 
 		setConfigDirty()
 
+		// capture title before deletion for user permission cleanup
+		loadpointTitle := instance.GetTitle()
+
 		if err := deleteDevice(id, h); err != nil {
 			jsonError(w, http.StatusBadRequest, err)
 			return
+		}
+
+		// cleanup user loadpoint permissions
+		if loadpointTitle != "" {
+			_ = dbuser.RemoveLoadpointFromAllUsers(loadpointTitle)
 		}
 
 		res := struct {

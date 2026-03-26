@@ -69,10 +69,11 @@ func TestJwtToken(t *testing.T) {
 	mock.EXPECT().String(keys.JwtSecret).Return("somesecret", nil).AnyTimes()
 
 	lifetime := time.Hour
-	tokenString, err := auth.GenerateJwtToken(lifetime)
+	tokenString, err := auth.GenerateJwtToken(admin, admin, lifetime)
 	assert.Nil(t, err, "token generation failed")
 	assert.NotEmpty(t, tokenString, "token is empty")
 
-	ok, err := auth.ValidateJwtToken(tokenString)
-	assert.True(t, ok && err == nil, "token is invalid")
+	claims, err := auth.ValidateJwtToken(tokenString)
+	assert.NotNil(t, claims, "claims are nil")
+	assert.Nil(t, err, "token is invalid")
 }

@@ -79,6 +79,16 @@
 				</router-link>
 			</li>
 			<li>
+				<router-link
+					class="dropdown-item"
+					to="/users"
+					active-class="active"
+					data-testid="topnavigation-users"
+				>
+					{{ $t("users.title") }}
+				</router-link>
+			</li>
+			<li>
 				<router-link class="dropdown-item" to="/log" active-class="active">
 					{{ $t("log.title") }}
 				</router-link>
@@ -133,6 +143,11 @@
 					{{ $t("header.nativeSettings") }}
 				</button>
 			</li>
+			<li v-if="showLogin">
+				<button type="button" class="dropdown-item" data-testid="topnavigation-login" @click="login">
+					{{ $t("header.login") }}
+				</button>
+			</li>
 			<li v-if="showLogout">
 				<button type="button" class="dropdown-item" @click="logout">
 					{{ $t("header.logout") }}
@@ -150,7 +165,7 @@ import "@h2d2/shopicons/es/regular/moonstars";
 import "@h2d2/shopicons/es/regular/menu";
 import "@h2d2/shopicons/es/regular/newtab";
 import collector from "@/mixins/collector";
-import { logout, isLoggedIn, openLoginModal } from "../Auth/auth";
+import { logout, isLoggedIn, isConfigured, openLoginModal } from "../Auth/auth";
 import { isApp, sendToApp } from "@/utils/native";
 import { isUserConfigError } from "@/utils/fatal";
 import { defineComponent, type PropType } from "vue";
@@ -218,6 +233,9 @@ export default defineComponent({
 		},
 		showLogout() {
 			return isLoggedIn();
+		},
+		showLogin() {
+			return isConfigured() && !isLoggedIn();
 		},
 	},
 	mounted() {

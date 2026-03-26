@@ -76,7 +76,7 @@ func newAuthRouter(t *testing.T, authObject auth.Auth) (*mux.Router, *SocketHub)
 	apiAuth.HandleFunc("/logout", logoutHandler).Methods(http.MethodPost)
 
 	// auth-protected websocket
-	router.Handle("/ws", ensureAuthHandler(authObject)(http.HandlerFunc(socketHandler(hub))))
+	router.Handle("/ws", ensureAuthHandler(authObject)(socketHandler(hub)))
 
 	// auth-protected api
 	api := router.PathPrefix("/api").Subrouter()
